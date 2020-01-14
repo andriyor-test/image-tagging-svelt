@@ -44,7 +44,7 @@
 
 	function mousemoveListner(e){
 		e.preventDefault()
-		
+
 		if (current && isMoved) {
 			let elementRef = document.getElementsByClassName('tagging-element')[current];
 			let elementSize =elementRef.getBoundingClientRect();
@@ -99,7 +99,7 @@
 
 
 	.image {
-		background-image: url(image.jpg);
+		background-image: url(/images/image.jpg);
 		width: 512px;
 		height: 512px;
 		position: relative;
