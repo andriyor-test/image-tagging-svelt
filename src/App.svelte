@@ -43,8 +43,6 @@
 	}
 
 	function mousemoveListner(e){
-		e.preventDefault()
-
 		if (current && isMoved) {
 			let elementRef = document.getElementsByClassName('tagging-element')[current];
 			let elementSize =elementRef.getBoundingClientRect();
@@ -59,6 +57,7 @@
 	}
 
 	function mousedownListner(e){
+		e.preventDefault()
 		isMoved = true;
 	}
 
@@ -131,10 +130,6 @@
 	.delete {
 		top: -1px;
 		padding: 5px;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-    /* width: 100px; */
-    overflow: hidden;
 	}
 
 	.hide {
