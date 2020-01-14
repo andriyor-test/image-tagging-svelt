@@ -24,26 +24,21 @@
 	]
 
 	function deleteTag(id) {
-		unsetCurrent()
+		unsetCurrent();
 		tags = tags.filter(tag => id != tag.id);
 	}
 
 	function unsetCurrent() {
-		current = null
-		changeCoordinate()
-	}
-
-	function changeCoordinate() {
-		tags[0]  = {...tags[0], ...{left: 150, top: 150}}
+		current = null;
 	}
 
 	function setCurrent(e, index) {
-		e.stopPropagation()
-		current = index	
+		e.stopPropagation();
+		current = index;
 	}
 
 	function mousemoveListner(e){
-		if (current && isMoved) {
+		if ((current !== null) && isMoved) {
 			let elementRef = document.getElementsByClassName('tagging-element')[current];
 			let elementSize =elementRef.getBoundingClientRect();
 			let image = document.getElementsByClassName('image')[0].getBoundingClientRect();
@@ -57,7 +52,7 @@
 	}
 
 	function mousedownListner(e){
-		e.preventDefault()
+		e.preventDefault();
 		isMoved = true;
 	}
 
