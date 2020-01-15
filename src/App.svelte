@@ -37,42 +37,38 @@
 		setCurrent(tagIndex);
 	}
 
+	function getCoordinate(e, imageSize, elementRef) {
+		const elementSize =elementRef.getBoundingClientRect();
+		const coordinate = {
+			x: 0, 
+			y: 0
+		};
+
+		if (e.clientX > imageSize.left + imageSize.width - elementSize.width / 2) {
+			coordinate.x = imageSize.width - elementSize.width
+		} else if (e.clientX < imageSize.left + elementSize.width / 2) {
+			coordinate.x = 0
+		} else {
+			coordinate.x = parseFloat(elementRef.style.left) + e.clientX - (elementSize.left + elementSize.width / 2)
+		}
+
+		if (e.clientY > imageSize.top + imageSize.height - elementSize.height / 2) {
+			coordinate.y = imageSize.height - elementSize.height
+		} else if (e.clientY < imageSize.top + elementSize.height / 2) {
+			coordinate.y = 0
+		} else {
+			coordinate.y = parseFloat(elementRef.style.top) + e.clientY - (elementSize.top + elementSize.height / 2)
+		}
+		return coordinate;
+}
+
 	function dragEnd(e) {
 		if (current !== null && current !== undefined) {
-			const image = document.getElementsByClassName('image')[0];
 			const imageSize = document.getElementsByClassName('image')[0].getBoundingClientRect();
 			const elementRef = document.getElementsByClassName('tagging-element')[current];
-			const elementSize =elementRef.getBoundingClientRect();
-
-			const newCoordinate = {
-				x: 0, 
-				y: 0
-			};
-			if (imageSize.left - elementSize.width / 2 < e.clientX) {
-				newCoordinate.x = imageSize.width - elementSize.width
-			}
-			else if (imageSize.left + elementSize.width / 2 > e.clientX) {
-				newCoordinate.x = 0
-			}
-			else {
-				newCoordinate.x = parseFloat(elementRef.style.left) + e.clientX - (elementSize.left + elementSize.width / 2)
-			}
-
-			if (imageSize.top + imageSize.height - elementSize.height / 2 < e.clientY) {
-				newCoordinate.y = imageSize.height - elementSize.height
-			}
-			else if (imageSize.top + elementSize.height / 2 > e.clientY) {
-				newCoordinate.y = 0
-			} else {
-				newCoordinate.y = parseFloat(elementRef.style.top) + e.clientY - (elementSize.top + elementSize.height / 2)
-			}
-
-			tags[current] = {...tags[current], 
-			...{
-					left: newCoordinate.x,
-					top: newCoordinate.y
-				}
-			}
+			
+			const newCoordinate = getCoordinate(e, imageSize, elementRef);
+			tags[current] = {...tags[current], ...{left: newCoordinate.x, top: newCoordinate.y}}
 		}
 	}
 </script>
