@@ -28,8 +28,15 @@
 		tags = tags.filter(tag => id != tag.id);
 	}
 
-	function unsetCurrent() {
+	function addNewTag(e) {
 		current = null;
+		let image = document.getElementsByClassName('image')[0].getBoundingClientRect();
+		tags = [...tags, {
+			id: 4,
+			title: 'sefdsfd',
+			left: e.screenX - (elementSize.left + elementSize.width),
+			top:  e.screenY -  (elementSize.top + elementSize.height)
+		}];
 	}
 
 	function setCurrent(e, index) {
@@ -37,49 +44,45 @@
 		current = index;
 	}
 
-	function mousemoveListner(e){
-		if ((current !== null) && isMoved) {
+	function dragStart(e) {
+	}
+
+	function dragEnd(e) {
+		if (current !== null) {
+			console.log('dragEnd');
 			let elementRef = document.getElementsByClassName('tagging-element')[current];
 			let elementSize =elementRef.getBoundingClientRect();
 			let image = document.getElementsByClassName('image')[0].getBoundingClientRect();
+
 			tags[current] = {...tags[current], 
 			...{
 					left: parseFloat(elementRef.style.left) + e.clientX - (elementSize.left + elementSize.width / 2), 
 					top: parseFloat(elementRef.style.top) + e.clientY - (elementSize.top + elementSize.height / 2)
 				}
 			}
+			console.log(tags[current]);
 		}
-	}
-
-	function mousedownListner(e){
-		e.preventDefault();
-		isMoved = true;
-	}
-
-	function mouseupListner(e) {
-		isMoved = false;
 	}
 </script>
 
 
-<div class="image" on:click="{() => unsetCurrent()}">
+<div class="image" on:click="{(e) => addNewTag(e)}">
 	{#each tags as tag, i}
-		 	<div
-		class="tagging-element {current === i ? 'grab-mode' : ''}"
-		on:click="{(e) => setCurrent(e, i)}"
-		on:mousemove="{(e) => mousemoveListner(e)}"
-		on:mousedown="{(e) => mousedownListner(e)}"
-		on:mouseup="{(e) => mouseupListner(e)}"
-		style='z-index: 0; left: {tag.left}px; top: {tag.top}px;'
-		
-	>
-		<div class="tagging-title">{tag.title}</div>
-		<div class="delete {current === i ? '' : 'hide'}"
-				on:click="{() => deleteTag(tag.id)}"
+		<div
+			draggable="true"
+			class="tagging-element {current === i ? 'grab-mode' : ''}"
+			on:click="{(e) => setCurrent(e, i)}"
+			on:dragstart="{(e) => dragStart(e)}"
+			on:dragend="{(e) => dragEnd(e)}"
+			style='z-index: 0; left: {tag.left}px; top: {tag.top}px;'
 		>
-			X
+			<div class="tagging-title">{tag.title}</div>
+			<div class="delete {current === i ? '' : 'hide'}"
+					on:click="{() => deleteTag(tag.id)}"
+			>
+				X
+			</div>
 		</div>
-	</div>
 	{/each}
 </div>
 
