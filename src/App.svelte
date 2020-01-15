@@ -1,36 +1,18 @@
 <script>	
 	import nanoid from "nanoid/non-secure";
+	import { taggs } from "./tags.js";
+
+	let tags = [...taggs];
 	let current;
 	const TAG_ITEM_HALF_WIDTH = 76;
 	const TAG_ITEM_HALF_HEIGHT = 15.5;
-
-	let tags = [
-		{
-			id: nanoid(),
-			title: 'Lorem Ipsum',
-			left: 150,
-			top: 150,
-		},
-		{
-			id: nanoid(),
-			title: 'Lorem',
-			left: 200,
-			top: 300,
-		},
-		{
-			id: nanoid(),
-			title: 'Lorem ipsum dolor sit amet, asaa ASASASDasd  asdasd',
-			left: 100,
-			top: 100,
-		}   
-	];
 
 	function unsetCurrent() {
 		current = null;
 	}
 
-	function setCurrent(index) {
-		current = index;
+	function setCurrent(tagIndex) {
+		current = tagIndex;
 	}
 
 	function deleteTag(e, id) {
@@ -50,20 +32,45 @@
 		setCurrent(tags.length - 1);
 	}
 
-	function selectTag(e, index) {
+	function selectTag(e, tagIndex) {
 		e.stopPropagation();
-		setCurrent(index);
+		setCurrent(tagIndex);
 	}
 
 	function dragEnd(e) {
-		if (current !== null) {
-			let elementRef = document.getElementsByClassName('tagging-element')[current];
-			let elementSize =elementRef.getBoundingClientRect();
-			let image = document.getElementsByClassName('image')[0].getBoundingClientRect();
+		if (current !== null && current !== undefined) {
+			const image = document.getElementsByClassName('image')[0];
+			const imageSize = document.getElementsByClassName('image')[0].getBoundingClientRect();
+			const elementRef = document.getElementsByClassName('tagging-element')[current];
+			const elementSize =elementRef.getBoundingClientRect();
+
+			const newCoordinate = {
+				x: 0, 
+				y: 0
+			};
+			if (imageSize.left - elementSize.width / 2 < e.clientX) {
+				newCoordinate.x = imageSize.width - elementSize.width
+			}
+			else if (imageSize.left + elementSize.width / 2 > e.clientX) {
+				newCoordinate.x = 0
+			}
+			else {
+				newCoordinate.x = parseFloat(elementRef.style.left) + e.clientX - (elementSize.left + elementSize.width / 2)
+			}
+
+			if (imageSize.top + imageSize.height - elementSize.height / 2 < e.clientY) {
+				newCoordinate.y = imageSize.height - elementSize.height
+			}
+			else if (imageSize.top + elementSize.height / 2 > e.clientY) {
+				newCoordinate.y = 0
+			} else {
+				newCoordinate.y = parseFloat(elementRef.style.top) + e.clientY - (elementSize.top + elementSize.height / 2)
+			}
+
 			tags[current] = {...tags[current], 
 			...{
-					left: parseFloat(elementRef.style.left) + e.clientX - (elementSize.left + elementSize.width / 2), 
-					top: parseFloat(elementRef.style.top) + e.clientY - (elementSize.top + elementSize.height / 2)
+					left: newCoordinate.x,
+					top: newCoordinate.y
 				}
 			}
 		}
@@ -72,16 +79,16 @@
 
 
 <div class="image" on:click="{(e) => addNewTag(e)}">
-	{#each tags as tag, i}
+	{#each tags as tag, tagIndex}
 		<div
 			draggable="true"
-			class="tagging-element {current === i ? 'grab-mode' : ''}"
-			on:click="{(e) => selectTag(e, i)}"
+			class="tagging-element {current === tagIndex ? 'grab-mode' : ''}"
+			on:click="{(e) => selectTag(e, tagIndex)}"
 			on:dragend="{(e) => dragEnd(e)}"
 			style='z-index: 0; left: {tag.left}px; top: {tag.top}px;'
 		>
 			<div class="tagging-title">{tag.title}</div>
-			<div class="delete {current === i ? '' : 'hide'}"
+			<div class="delete {current === tagIndex ? '' : 'hide'}"
 					on:click="{(e) => deleteTag(e, tag.id)}"
 			>
 				X
@@ -123,8 +130,11 @@
 	}
 
 	.delete {
-		top: -1px;
 		padding: 5px;
+	}
+
+	.delete:hover {
+		cursor: grabbing;
 	}
 
 	.hide {
@@ -133,6 +143,6 @@
 
 	.grab-mode {
 		z-index: 16777270!important;
-		cursor: grab;
+		cursor: move;
 	}
 </style>
