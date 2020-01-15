@@ -16,6 +16,7 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "nanoid": "^2.1.9",
     "sirv-cli": "^0.4.4"
   }
 }
