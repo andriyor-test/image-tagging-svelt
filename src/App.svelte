@@ -1,11 +1,17 @@
 <script>
+  import { onMount } from "svelte";
   import nanoid from "nanoid/non-secure";
   import { taggs } from "./tags.js";
 
   let tags = [...taggs];
   let current;
+  let image;
   const TAG_ITEM_HALF_WIDTH = 76;
   const TAG_ITEM_HALF_HEIGHT = 15.5;
+
+  onMount(() => {
+    image = document.getElementsByClassName("image")[0];
+  });
 
   function unsetCurrent() {
     current = null;
@@ -22,7 +28,6 @@
   }
 
   function addNewTag(e) {
-    const image = document.getElementsByClassName("image")[0];
     tags = [
       ...tags,
       {
@@ -73,9 +78,7 @@
 
   function dragEnd(e) {
     if (current !== null && current !== undefined) {
-      const imageSize = document
-        .getElementsByClassName("image")[0]
-        .getBoundingClientRect();
+      const imageSize = image.getBoundingClientRect();
       const elementRef = document.getElementsByClassName("tagging-element")[
         current
       ];
